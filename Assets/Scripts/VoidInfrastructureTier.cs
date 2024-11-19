@@ -47,7 +47,21 @@ public class VoidInfrastructureTier : ResourceTier
     public override void PurchaseUnits(int quantity)
     {
         double unitCost = GetNextUnitCost();
-        double totalCost = unitCost * quantity;
+        double totalCost = GetTotalCost(quantity);
+        if (quantity > 1 && !CanBuy(totalCost))
+        {
+            // Prevent purchase if quantity is higher than 1 and not enough resources
+            int affordableQuantity = GetMaxAffordableUnits(quantity);
+            if (affordableQuantity > 0)
+            {
+                totalCost = GetTotalCost(affordableQuantity);
+                GameManager.Instance.VoidOpals -= totalCost;
+                boughtUnits += affordableQuantity;
+                UpgradeManager.Instance.RecalculateUpgrades();
+            }
+            return;
+        }
+
         if (CanBuy(totalCost))
         {
             GameManager.Instance.VoidOpals -= totalCost;
@@ -60,7 +74,7 @@ public class VoidInfrastructureTier : ResourceTier
             int affordableQuantity = GetMaxAffordableUnits(quantity);
             if (affordableQuantity > 0)
             {
-                totalCost = unitCost * affordableQuantity;
+                totalCost = GetTotalCost(affordableQuantity);
                 GameManager.Instance.VoidOpals -= totalCost;
                 boughtUnits += affordableQuantity;
                 UpgradeManager.Instance.RecalculateUpgrades();
@@ -71,11 +85,11 @@ public class VoidInfrastructureTier : ResourceTier
     private int GetMaxAffordableUnits(int maxQuantity)
     {
         int affordableUnits = 0;
-        float totalCost = 0f;
-        double currentUnits = unitsOwned;
+        double totalCost = 0f;
+        double currentUnits = boughtUnits;
         for (int i = 0; i < maxQuantity; i++)
         {
-            float cost = Mathf.Ceil(baseCost * Mathf.Pow(costMultiplier, (float)currentUnits));
+            double cost = Mathf.Ceil(baseCost * Mathf.Pow(costMultiplier, (float)currentUnits));
             totalCost += cost;
             if (GameManager.Instance.VoidOpals >= totalCost)
             {

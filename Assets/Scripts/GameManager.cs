@@ -60,6 +60,7 @@ public class GameManager : MonoBehaviour
         {
             CosmicCredits += 1e10;
             TotalCosmicCredits += 1e10;
+            VoidOpals += 1e6;
         }
     }
 
