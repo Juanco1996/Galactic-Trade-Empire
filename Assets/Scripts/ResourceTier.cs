@@ -173,7 +173,7 @@ public class ResourceTier : MonoBehaviour
         }
     }
 
-    public void ResetTier1()
+    public virtual void ResetTier1()
     {
         unitsOwned = 0;
         boughtUnits = 0;

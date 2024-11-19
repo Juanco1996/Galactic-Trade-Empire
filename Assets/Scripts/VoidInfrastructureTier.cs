@@ -89,4 +89,10 @@ public class VoidInfrastructureTier : ResourceTier
         }
         return affordableUnits;
     }
+
+    public override void ResetTier1()
+    {
+        generatedUnits = 0;
+        productionMultiplier = 0f; // Reset to default if necessary
+    }
 }
